@@ -1,3 +1,9 @@
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
+![VirtualBox](https://img.shields.io/badge/VirtualBox-Lab-183A61?logo=virtualbox&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-Server-FCC624?logo=linux&logoColor=black)
+![UFW](https://img.shields.io/badge/Firewall-UFW-2C3E50)
+![Nginx](https://img.shields.io/badge/Nginx-WebServer-009639?logo=nginx&logoColor=white)
+
 # Secure Infrastructure Project (VirtualBox)
 
 ## Overview
