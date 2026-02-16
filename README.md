@@ -76,6 +76,12 @@ Architecture diagrams are available in the `diagrams/` folder.
 ## Cloud Concept Mapping
 This setup represents basic Google Cloud concepts:
 
+- VPC CIDR: 10.0.0.0/16
+- Subnet CIDR: 10.0.1.0/24
+- Region: us-central1
+- Zone: us-central1-a
+
+
 | Local Setup | GCP Concept |
 |------------|------------|
 | VirtualBox Network | VPC |
