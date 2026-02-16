@@ -1,182 +1,140 @@
-![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?logo=prometheus&logoColor=white)
-![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?logo=grafana&logoColor=white)
-![Alertmanager](https://img.shields.io/badge/Alertmanager-Alerts-FF6F00)
-![Node Exporter](https://img.shields.io/badge/Node_Exporter-Metrics-2E8B57)
-![Telegram](https://img.shields.io/badge/Telegram-Notification-26A5E4?logo=telegram&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
+![VirtualBox](https://img.shields.io/badge/VirtualBox-Lab-183A61?logo=virtualbox&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-Server-FCC624?logo=linux&logoColor=black)
+![UFW](https://img.shields.io/badge/Firewall-UFW-2C3E50)
+![Nginx](https://img.shields.io/badge/Nginx-WebServer-009639?logo=nginx&logoColor=white)
 
-# Monitoring Infrastructure with Prometheus & Grafana
+# Secure Infrastructure Project (VirtualBox)
 
 ## Overview
+This project demonstrates a basic secure infrastructure setup using Linux virtual machines on VirtualBox.  
+The main focus is on **server setup, networking, firewall configuration, and SSH hardening**, as a foundation for cloud infrastructure concepts.
 
-This project implements a complete monitoring stack using:
+This project was built as part of my preparation for **IT Infrastructure / Cloud Engineer internship roles**.
 
-- Prometheus (metrics collection)
-- Node Exporter (system metrics)
-- Grafana (dashboard visualization)
-- Alertmanager (alert routing)
-- Telegram Bot (real-time notifications)
+---
 
-The goal of this project is to simulate a production-style monitoring environment for Linux servers in a controlled VirtualBox lab environment.
-
-This project was built as part of my preparation for IT Infrastructure / Cloud / DevOps internship roles.
+## Goals
+- Build a simple multi-VM Linux infrastructure
+- Configure private networking between servers
+- Apply basic firewall rules
+- Harden SSH access
+- Understand how on-prem infrastructure maps to cloud architecture
 
 ---
 
 ## Architecture
-
-The monitoring architecture consists of:
-
-- 1 Admin Server (Monitoring Server)
-  - Prometheus
-  - Grafana
-  - Alertmanager
-  - Telegram Webhook Service
-
-- 1 Web Server
-  - Node Exporter
-  - Nginx
-
-Metrics flow:
-
-Node Exporter → Prometheus → Alertmanager → Telegram  
-Prometheus → Grafana (Visualization)
+- **2 Ubuntu Server VMs**
+  - Web Server
+  - Admin Server
+- **Network Configuration**
+  - NAT Adapter (internet access)
+  - Host-Only Adapter (private communication)
+- **Security**
+  - UFW firewall enabled
+  - SSH access restricted
 
 Architecture diagrams are available in the `diagrams/` folder.
 
 ---
 
-## Components
-
-### Prometheus
-- Scrapes metrics every 15 seconds
-- Collects metrics from:
-  - Admin Server
-  - Web Server
-- Evaluates alert rules
-
-### Node Exporter
-- Runs on both VMs
-- Exposes:
-  - CPU usage
-  - Memory usage
-  - Disk metrics
-  - System load
-
-### Grafana
-- Connected to Prometheus as a data source
-- Custom dashboard created for:
-  - CPU usage
-  - Memory usage
-  - Instance monitoring
-
-### Alertmanager
-- Routes alerts based on severity
-- Separates:
-  - warning
-  - critical
-- Sends alerts to Telegram via webhook service
-
-### Telegram Integration
-- Custom webhook service built using Python (Flask)
-- Receives Alertmanager payload
-- Sends formatted message to Telegram Bot
+## Tools & Technologies
+- Ubuntu Server
+- Oracle VirtualBox
+- Linux networking (NAT & Host-Only)
+- UFW Firewall
+- OpenSSH
+- Nginx (Web Server)
+- Terraform (GCP design only)
 
 ---
 
-## Implementation Details
+## What Was Implemented
 
-### 1. Prometheus Configuration
+### Virtual Machine Setup
+- Created two Ubuntu Server VMs
+- Configured hostname and network interfaces
+- Verified IP addresses and connectivity
 
-- Configured `scrape_configs` for:
-  - localhost (Prometheus)
-  - Admin Server (Node Exporter)
-  - Web Server (Node Exporter)
+### Networking
+- NAT for outbound internet access
+- Host-Only network for internal VM communication
+- Connectivity tested using `ping`
 
-- Alert rules created:
-  - High CPU Usage (warning)
-  - High CPU Usage Critical
+### Firewall
+- Enabled UFW on both VMs
+- Allowed only required ports:
+  - SSH (22)
+  - HTTP (80) on Web Server
+- Default deny for other inbound traffic
 
-### 2. Alert Rules Example
+### SSH Hardening
+- Disabled root login
+- Tested authentication behavior
+- Verified blocked access for unauthorized attempts
 
-Alerts trigger when CPU usage exceeds defined thresholds for a sustained period.
-
-Severity labels:
-- warning
-- critical
-
-### 3. Alert Flow
-
-1. Prometheus detects threshold breach.
-2. Alert is marked as firing.
-3. Alertmanager receives alert.
-4. Alert is routed based on severity.
-5. Webhook service processes alert.
-6. Telegram bot sends real-time notification.
+### Web Server
+- Installed Nginx on Web Server VM
+- Verified service using browser and CLI tools
 
 ---
 
-## Security Hardening
+## Cloud Concept Mapping
+This setup represents basic Google Cloud concepts:
 
-- UFW firewall enabled on both VMs
-- Port 9100 (Node Exporter) restricted to Admin Server only
-- SSH access restricted
-- Grafana anonymous access disabled
-- Default Grafana credentials changed
-- Services configured with systemd for auto-start
+- VPC CIDR: 10.0.0.0/16
+- Subnet CIDR: 10.0.1.0/24
+- Region: us-central1
+- Zone: us-central1-a
+
+
+| Local Setup | GCP Concept |
+|------------|------------|
+| VirtualBox Network | VPC |
+| Host-Only Adapter | Private Subnet |
+| UFW Firewall | VPC Firewall Rules |
+| Virtual Machines | Compute Engine |
+
+Terraform files are included as **infrastructure design only** (not deployed).
 
 ---
 
 ## Screenshots
-
-Available in the `screenshots/` folder:
-
-- Prometheus targets page
-- Prometheus alerts (firing state)
-- Grafana dashboard
-- Alertmanager UI
-- Telegram alert message
+Screenshots included in the `screenshots/` folder:
+- VM running status
+- Network configuration
 - Firewall rules
-- Service status (Prometheus, Grafana, Alertmanager)
+- SSH access testing
+- Nginx web page
 
 ---
 
-## Challenges & Troubleshooting
+## Challenges & Notes
+- Network interfaces required manual verification
+- SSH access issues helped reinforce firewall and authentication concepts
+- Firewall misconfiguration initially blocked valid traffic and was corrected
 
-- YAML formatting issues in alert rules
-- Prometheus service failed due to rule misconfiguration
-- Telegram bot returned 403 due to incorrect chat ID
-- Webhook service initially not running (connection refused)
-- Firewall rules blocking Node Exporter
-
-Each issue was diagnosed using logs and corrected accordingly.
+This project was built step by step while learning infrastructure fundamentals, including troubleshooting during setup.
 
 ---
 
 ## What I Learned
-
-- Designing monitoring-first infrastructure
-- Understanding metrics lifecycle
-- Writing Prometheus alert rules
-- Alert routing strategies
-- Production-style service management with systemd
-- Securing monitoring endpoints
-- Integrating infrastructure alerts with external messaging platforms
+- Linux server basics
+- Network segmentation
+- Firewall and SSH security practices
+- Infrastructure-first mindset before cloud deployment
+- Translating local infrastructure into cloud architecture
 
 ---
 
-## Future Improvements
-
-- Add Alertmanager email integration
-- Deploy stack using Docker Compose
-- Add logging stack (Loki or ELK)
-- Deploy monitoring on cloud VM
-- Add SSL/TLS for Grafana and Prometheus
+## Next Improvements
+- Add monitoring and logging
+- Automate configuration
+- Deploy similar architecture on cloud platform
 
 ---
 
 ## Author
-
-Ryan Adam  
+**Ryan Adam**  
 Aspiring IT Infrastructure & Cloud Engineer  
 GitHub: https://github.com/ryanadams-code
